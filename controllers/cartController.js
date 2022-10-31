@@ -30,8 +30,8 @@ exports.userCart = catchAsync(async (req, res, next) => {
 
   productForCart = JSON.parse(JSON.stringify(productForCart));
   // if (productForCart && productForCart?.length > 0) {
-  productForCart = productForCart?.map((item) => ({
-    ...products?.find((el) => el._id == item._id && el),
+  productForCart = productForCart.map((item) => ({
+    ...products.find((el) => el._id == item._id && el),
     productId: item.product,
     ...item,
   }));
@@ -46,15 +46,15 @@ exports.userCart = catchAsync(async (req, res, next) => {
     return result;
   }, {});
 
-  let values = Object?.values(groupByData);
+  let values = Object.values(groupByData);
   let carts = [];
   // if (values && values?.length > 0) {
-  for (let i = 0; i < values?.length; i++) {
+  for (let i = 0; i < values.length; i++) {
     let object = {};
 
     object.products = values[i];
     object.orderedTo = values[i][0].pharmacy;
-    object.cartTotal = values[i]?.reduce((accum, curr) => {
+    object.cartTotal = values[i].reduce((accum, curr) => {
       return accum + curr.price * curr.count;
     }, 0);
 
