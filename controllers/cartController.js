@@ -22,21 +22,21 @@ exports.userCart = catchAsync(async (req, res, next) => {
     console.log('removed old cart');
   }
 
-  let ids = products?.map((el) => el._id);
+  let ids = products.map((el) => el._id);
 
   let productForCart = await ProductInventory.find({
     _id: { $in: [...ids] },
   });
 
-  if (productForCart && productForCart?.length > 0) {
-    productForCart = JSON.parse(JSON.stringify(productForCart));
-    productForCart = productForCart?.map((item) => ({
-      ...products?.find((el) => el._id == item._id && el),
-      productId: item.product,
-      ...item,
-    }));
-  }
-  let groupByData = productForCart?.reduce((result, currentValue) => {
+  productForCart = JSON.parse(JSON.stringify(productForCart));
+  // if (productForCart && productForCart?.length > 0) {
+  productForCart = productForCart?.map((item) => ({
+    ...products?.find((el) => el._id == item._id && el),
+    productId: item.product,
+    ...item,
+  }));
+  // }
+  let groupByData = productForCart.reduce((result, currentValue) => {
     if (!result[currentValue['pharmacy']]) {
       result[currentValue['pharmacy']] = [];
     }
@@ -48,20 +48,20 @@ exports.userCart = catchAsync(async (req, res, next) => {
 
   let values = Object?.values(groupByData);
   let carts = [];
-  if (values && values?.length > 0) {
-    for (let i = 0; i < values?.length; i++) {
-      let object = {};
+  // if (values && values?.length > 0) {
+  for (let i = 0; i < values?.length; i++) {
+    let object = {};
 
-      object.products = values[i];
-      object.orderedTo = values[i][0].pharmacy;
-      object.cartTotal = values[i]?.reduce((accum, curr) => {
-        return accum + curr.price * curr.count;
-      }, 0);
+    object.products = values[i];
+    object.orderedTo = values[i][0].pharmacy;
+    object.cartTotal = values[i]?.reduce((accum, curr) => {
+      return accum + curr.price * curr.count;
+    }, 0);
 
-      carts.push(object);
-    }
+    carts.push(object);
   }
-  let total = productForCart?.reduce((acc, curr) => {
+  // }
+  let total = productForCart.reduce((acc, curr) => {
     return acc + curr.price * curr.count;
   }, 0);
 
@@ -74,7 +74,6 @@ exports.userCart = catchAsync(async (req, res, next) => {
   // console.log('new cart', newCart);
   return sendSuccessResponse(res, 200, { ok: true }, 'Cart saved Successfully');
 });
-
 exports.getUserCart = catchAsync(async (req, res, next) => {
   const user = await Pharmacy.findOne({ _id: req.user._id }).exec();
 
